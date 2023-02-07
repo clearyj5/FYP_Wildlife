@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     },
     backImage: {
         width: "100%", 
-        height: 340, 
+        height: "38%", 
         position: "absolute", 
         top: 0, 
         resizeMode: 'cover', 
