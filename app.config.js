@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 export default {
   "expo": {
-    "name": "WildlifeApp",
-    "slug": "WildlifeApp",
+    "name": "FYP_Wildlife",
+    "slug": "FYP_Wildlife",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
