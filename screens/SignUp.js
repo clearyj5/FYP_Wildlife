@@ -36,10 +36,10 @@ export default function SignUp({ navigation }) {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <Image source={backImage} style={styles.backImage} />
             <View style={styles.whiteSheet} />
-            <SafeAreaView style={styles.form} >
+            <View style={styles.form} >
                 <Text style={styles.title}>Sign Up</Text>
                 <TextInput 
                     style={styles.input}
@@ -79,14 +79,16 @@ export default function SignUp({ navigation }) {
                     <Text style={{fontSize: 16, fontWeight: '600', color: '#0f4c5c'}}> Login</Text>
                 </TouchableOpacity>
                 </View>
-            </SafeAreaView>
-        </View>
+            </View>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        flexDirection: "column",
+        alignItems: "stretch",
         backgroundColor: "#fff"
     },
     title: {
@@ -106,24 +108,25 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     backImage: {
-        width: "100%", 
-        height: 340, 
+        height: "40%",
+        width: "100%",
         position: "absolute", 
         top: 0, 
         resizeMode: 'cover', 
     }, 
-    whiteSheet: {       
+    whiteSheet: {      
         width: '100%', 
-        height: "75%",
+        height: "85%",
         position: "absolute",
         bottom: 0,
         backgroundColor:'#fff',
         borderTopLeftRadius: 60,
     },
     form: {
+        marginTop: 30,
         flex: 1,
         justifyContent: 'center',
-        marginHorizontal: 30,
+        marginHorizontal: 40,
     },
     button: {
         backgroundColor: '#0f4c5c',
