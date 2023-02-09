@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, Touchab
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { collection, addDoc, orderBy, query, onSnapshot } from 'firebase/firestore';
 import { auth, database } from '../config/firebase';
-import { launchImageLibrary } from 'react-native-image-picker';
+import * as ImagePicker from 'expo-image-picker';
 const backImage = require("../assets/KWR_logo.png");
 
 export default function SignUp({ navigation }) {
@@ -11,7 +11,7 @@ export default function SignUp({ navigation }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [profilePic, setProfilePic] = useState("");
+    const [profilePic, setProfilePic] = useState(null);
 
     const onHandleSignUp = () => {
         if (email != "" && password != "" && name != ""){
@@ -27,12 +27,18 @@ export default function SignUp({ navigation }) {
         }
     };
 
-    const handleChoosePhoto = () => {
-        launchImageLibrary({ noData: true }, (response) => {
-          if (response) {
-            setProfilePic(response);
-          }
+    const handleChoosePhoto = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
         });
+    
+        if (!result.canceled) {
+          setProfilePic(result.assets[0].uri);
+        }
     };
 
     return (
