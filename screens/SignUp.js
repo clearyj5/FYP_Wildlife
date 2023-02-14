@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { collection, addDoc, orderBy, query, onSnapshot } from 'firebase/firestore';
-import { auth, database } from '../config/firebase';
+import { auth, database, storage } from '../config/firebase';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from 'expo-image-picker';
 const backImage = require("../assets/KWR_logo.png");
 
@@ -11,7 +12,8 @@ export default function SignUp({ navigation }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [profilePic, setProfilePic] = useState(null);
+    // const [profilePic, setProfilePic] = useState(null);
+    // const [uploading, setUploading] = useState(false);
 
     const onHandleSignUp = () => {
         if (email != "" && password != "" && name != ""){
@@ -21,25 +23,61 @@ export default function SignUp({ navigation }) {
             addDoc(collection(database, 'users'), {
                 name,
                 email,
-                password,
-                profilePic
+                // photoURL: uploadProfilePic
             });
         }
     };
 
-    const handleChoosePhoto = async () => {
-        // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
-        });
+    // const uploadProfilePic = async () => {
+    //     const blob = await new Promise((resolve, reject) => {
+    //       const xhr = new XMLHttpRequest();
+    //       xhr.onload = function() {
+    //         resolve(xhr.response);
+    //       };
+    //       xhr.onerror = function() {
+    //         reject(new TypeError('Network request failed'));
+    //       };
+    //       xhr.responseType = 'blob';
+    //       xhr.open('GET', profilePic, true);
+    //       xhr.send(null);
+    //     })
+    //     const ref = firebase.storage().ref().child(email)
+    //     const snapshot = ref.put(blob)
+    //     snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
+    //       ()=>{
+    //         setUploading(true)
+    //       },
+    //       (error) => {
+    //         setUploading(false)
+    //         console.log(error)
+    //         blob.close()
+    //         return 
+    //       },
+    //       () => {
+    //         snapshot.snapshot.ref.getDownloadURL().then((url) => {
+    //           setUploading(false)
+    //           console.log("Download URL: ", url)
+    //           setProfilePic(url)
+    //           blob.close()
+    //           return url
+    //         })
+    //       }
+    //       )
+    //   }
+
+    // const handleChoosePhoto = async () => {
+    //     // No permissions request is necessary for launching the image library
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //       allowsEditing: true,
+    //       aspect: [4, 3],
+    //       quality: 1,
+    //     });
     
-        if (!result.canceled) {
-          setProfilePic(result.assets[0].uri);
-        }
-    };
+    //     if (!result.canceled) {
+    //       setProfilePic(result.assets[0].uri);
+    //     }
+    // };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -75,7 +113,6 @@ export default function SignUp({ navigation }) {
                     value={password}
                     onChangeText={(text) => setPassword(text)} 
                 />
-                <Button title="Choose Profile Photo" onPress={handleChoosePhoto} />
                 <TouchableOpacity style={styles.button} onPress={onHandleSignUp}>
                     <Text style={styles.text}>Sign Up</Text>
                 </TouchableOpacity>

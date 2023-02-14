@@ -13,7 +13,8 @@ const firebaseConfig = {
     messagingSenderId: Constants.manifest.extra.messagingSenderId,
     appId: Constants.manifest.extra.appId,
     measurementId: Constants.manifest.extra.measurementId,
-    databaseURL: Constants.manifest.extra.databaseURL
+    databaseURL: Constants.manifest.extra.databaseURL,
+    storageBucket: 'gs://wildlife-app-b9715.appspot.com'
 };
 //initialize firebase
 initializeApp(firebaseConfig);

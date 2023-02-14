@@ -63,6 +63,6 @@ const Home = () => {
             shadowOpacity: .9,
             shadowRadius: 8,
             marginRight: 20,
-            marginBottom: 50,
+            marginBottom: 40,
         }
     });
