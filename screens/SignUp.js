@@ -25,6 +25,8 @@ export default function SignUp({ navigation }) {
                 email,
                 // photoURL: uploadProfilePic
             });
+
+            addDoc(collection(database, (email + 'Chats')), {});
         }
     };
 

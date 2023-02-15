@@ -34,7 +34,7 @@ export default function Chat() {
 
     useLayoutEffect(() => {
 
-        const collectionRef = collection(database, 'chats');
+        const collectionRef = collection(database, 'messages');
         const q = query(collectionRef, orderBy('createdAt', 'desc'));
 
         const unsubscribe = onSnapshot(q, querySnapshot => {
@@ -57,7 +57,7 @@ export default function Chat() {
         );
         // setMessages([...messages, ...messages]);
         const { _id, createdAt, text, user } = messages[0];    
-        addDoc(collection(database, 'chats'), {
+        addDoc(collection(database, 'messages'), {
           _id,
           createdAt,
           text,
