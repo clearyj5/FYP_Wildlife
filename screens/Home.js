@@ -12,7 +12,7 @@ const Home = () => {
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
-                <FontAwesome name="search" size={24} color={colors.gray} style={{marginLeft: 15}}/>
+                <FontAwesome name="search" size={24} color={colors.gray} style={{ marginLeft: 15 }} />
             ),
             headerRight: () => (
                 <Image
@@ -30,7 +30,7 @@ const Home = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity
-                onPress={() => navigation.navigate("Chat")}
+                onPress={() => navigation.navigate("Messages")}
                 style={styles.chatButton}
             >
                 <Entypo name="chat" size={24} color={colors.lightGray} />

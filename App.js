@@ -9,6 +9,7 @@ import Chat from './screens/Chat.js';
 import Login from './screens/Login.js';
 import SignUp from './screens/SignUp.js';
 import Home from './screens/Home.js'
+import ChatSearch from './screens/ChatSearch';
 
 const Stack = createStackNavigator();
 const AuthenticatedUserContext = createContext({});
@@ -16,31 +17,32 @@ const AuthenticatedUserContext = createContext({});
 const AuthenticatedUserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   return (
-    <AuthenticatedUserContext.Provider value={{user, setUser}}>
-        {children}
+    <AuthenticatedUserContext.Provider value={{ user, setUser }}>
+      {children}
     </AuthenticatedUserContext.Provider>
   )
 }
 
-function ChatStack () {
+function ChatStack() {
   return (
     <Stack.Navigator defaultScreenOptions={Home}>
       <Stack.Screen name='Home' component={Home} />
+      <Stack.Screen name='Messages' component={ChatSearch} />
       <Stack.Screen name='Chat' component={Chat} />
     </Stack.Navigator>
   )
 }
 
-function AuthStack () {
+function AuthStack() {
   return (
-    <Stack.Navigator defaultScreenOptions={Login} screenOptions={{headerShown: false}}>
-    <Stack.Screen name='Login' component={Login} />
-    <Stack.Screen name='SignUp' component={SignUp} />
-  </Stack.Navigator>
+    <Stack.Navigator defaultScreenOptions={Login} screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='Login' component={Login} />
+      <Stack.Screen name='SignUp' component={SignUp} />
+    </Stack.Navigator>
   )
 }
 
-function RootNavigator () {
+function RootNavigator() {
   const { user, setUser } = useContext(AuthenticatedUserContext);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -54,14 +56,14 @@ function RootNavigator () {
   }, [user]);
   if (loading) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size='large' />
       </View>
     )
   }
   return (
     <NavigationContainer>
-      { user ? <ChatStack /> : <AuthStack />}
+      {user ? <ChatStack /> : <AuthStack />}
     </NavigationContainer>
   )
 }
