@@ -70,7 +70,7 @@ export default function Chat() {
             messages={messages}
             onSend={messages => onSend(messages)}
             user={{
-                _id: auth?.currentUser?.email,
+                _id: auth?.currentUser?.uid,
                 avatar: 'https://i.pinimg.com/736x/0e/2e/9d/0e2e9dc33751fbf4a708c1ecbdaf2d43.jpg'
             }}
             messagesContainerStyle={{

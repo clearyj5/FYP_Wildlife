@@ -30,7 +30,7 @@ const Home = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity
-                onPress={() => navigation.navigate("Messages")}
+                onPress={() => navigation.navigate("Channels")}
                 style={styles.chatButton}
             >
                 <Entypo name="chat" size={24} color={colors.lightGray} />

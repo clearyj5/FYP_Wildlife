@@ -1,15 +1,31 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useContext, useState, useLayoutEffect } from "react";
 import { StyleSheet, Text, TextInput, View, Keyboard, Button, Image, TouchableOpacity } from "react-native";
 import { Feather, Entypo, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signOut } from 'firebase/auth';
 import { auth, database } from '../config/firebase';
+import { AuthenticatedUserContext } from "../App";
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    setDoc,
+    doc,
+    updateDoc,
+    serverTimestamp,
+    getDoc,
+} from "firebase/firestore";
 import colors from '../colors';
 
 const ChatSearch = () => {
+    const [user, setUser] = useState(null);
+    const [err, setErr] = useState(false);
 
     const [clicked, setClicked] = useState(false);
     const [searchPhrase, setSearchPhrase] = useState("");
+
+    const { currentUser } = useContext(AuthenticatedUserContext);
 
     const navigation = useNavigation();
 
@@ -19,21 +35,76 @@ const ChatSearch = () => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-          headerRight: () => (
-            <TouchableOpacity
-              style={{
-                marginRight: 10
-              }}
-              onPress={onSignOut}
-            >
-              <AntDesign name="logout" size={24} color={colors.gray} style={{marginRight: 10}}/>
-            </TouchableOpacity>
-          )
+            headerRight: () => (
+                <TouchableOpacity
+                    style={{
+                        marginRight: 10
+                    }}
+                    onPress={onSignOut}
+                >
+                    <AntDesign name="logout" size={24} color={colors.gray} style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+            )
         });
     }, [navigation]);
 
+    const handleSearch = async () => {
+        console.log(searchPhrase)
+        const q = query(
+            collection(database, "users"),
+            where("displayName", "==", searchPhrase)
+        );
+
+        try {
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                setUser(doc.data());
+            });
+        } catch (err) {
+            setErr(true);
+        }
+    };
+
+    const handleSelect = async () => {
+        //check whether the group(chats in firestore) exists, if not create
+        const combinedId =
+            currentUser.uid > user.uid
+                ? currentUser.uid + user.uid
+                : user.uid + currentUser.uid;
+        try {
+            const res = await getDoc(doc(database, "chats", combinedId));
+
+            if (!res.exists()) {
+                //create a chat in chats collection
+                await setDoc(doc(database, "chats", combinedId), { messages: [] });
+
+                //create user chats
+                await updateDoc(doc(database, "userChats", currentUser.uid), {
+                    [combinedId + ".userInfo"]: {
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        //photoURL: user.photoURL,
+                    },
+                    [combinedId + ".date"]: serverTimestamp(),
+                });
+
+                await updateDoc(doc(database, "userChats", user.uid), {
+                    [combinedId + ".userInfo"]: {
+                        uid: currentUser.uid,
+                        displayName: currentUser.displayName,
+                        //photoURL: currentUser.photoURL,
+                    },
+                    [combinedId + ".date"]: serverTimestamp(),
+                });
+            }
+        } catch (err) { }
+
+        setUser(null);
+        setSearchPhrase("")
+    };
+
     return (
-        <View style={{height: "100%", margin: 15}}>
+        <View style={{ height: "100%", margin: 15 }}>
             <View style={styles.searchBar}>
                 <View style={clicked ? styles.searchBar__clicked : styles.searchBar__unclicked}>
                     {/* search Icon */}
@@ -49,6 +120,7 @@ const ChatSearch = () => {
                         placeholder="Search"
                         value={searchPhrase}
                         onChangeText={setSearchPhrase}
+                        onEndEditing={handleSearch}
                         onFocus={() => { setClicked(true) }}
                     />
                     {/* cross Icon, depending on whether the search bar is clicked or not */}
@@ -64,14 +136,15 @@ const ChatSearch = () => {
                 )}
             </View>
             <TouchableOpacity style={styles.searchItem} onPress={() => navigation.navigate("Chat")}>
-                    <View style={styles.imageBox}>
-                        <Image source= {{ uri:"https://i.pinimg.com/736x/0e/2e/9d/0e2e9dc33751fbf4a708c1ecbdaf2d43.jpg"}} style={styles.image}/>
-                    </View>
-                    <Text style={styles.name}>Rescuers</Text>
+                <View style={styles.imageBox}>
+                    <Image source={{ uri: "https://i.pinimg.com/736x/0e/2e/9d/0e2e9dc33751fbf4a708c1ecbdaf2d43.jpg" }} style={styles.image} />
+                </View>
+                <Text style={styles.name}>Rescuers</Text>
             </TouchableOpacity>
         </View>
     );
-};
+}
+
 export default ChatSearch;
 
 const styles = StyleSheet.create({
@@ -115,13 +188,13 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     imageBox: {
-        flex:2,
+        flex: 2,
     },
     image: {
         height: 70,
         width: 65,
         resizeMode: "cover",
-        borderRadius: 65/2,
+        borderRadius: 65 / 2,
         margin: 10
     },
     name: {

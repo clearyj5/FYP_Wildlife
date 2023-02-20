@@ -1,91 +1,49 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert } from 'react-native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection, addDoc, orderBy, query, onSnapshot } from 'firebase/firestore';
+import React, { useState } from "react";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
+import { StyleSheet, Text, View, Button, TextInput, Image, TouchableOpacity, StatusBar, Alert } from 'react-native';
 import { auth, database, storage } from '../config/firebase';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from 'expo-image-picker';
+import { useNavigation } from "@react-navigation/native";
 const backImage = require("../assets/KWR_logo.png");
 
-const SignUp = ({ navigation }) => {
+const SignUp = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
-    const [image, setImage] = useState(null);
-    const [uploading, setUploading] = useState(false)
+    const [displayName, setDisplayName] = useState("");
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            // We can  specify whether we need only Images or Videos
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,   // 0 means compress for small size, 1 means compress for maximum quality
-        });
+    const navigation = useNavigation();
 
-        console.log(result);
+    const onHandleSignUp = async () => {
+        if (email != "" && password != "" && displayName != "") {
+            const res = await createUserWithEmailAndPassword(auth, email, password)
+    
+            try {
+                //Update profile
+                await updateProfile(res.user, {
+                    displayName,
+                    // photoURL: downloadURL,
+                });
+                //create user on firestore
+                await setDoc(doc(database, "users", res.user.uid), {
+                    uid: res.user.uid,
+                    displayName,
+                    email,
+                    // photoURL: downloadURL,
+                });
 
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
-    };
-
-    const uploadImage = async () => {
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                resolve(xhr.response);
-            };
-            xhr.onerror = function () {
-                reject(new TypeError('Network request failed'));
-            };
-            xhr.responseType = 'blob';
-            xhr.open('GET', image, true);
-            xhr.send(null);
-        })
-        const ref = firebase.storage().ref().child(`Pictures/Image1`)
-        const snapshot = ref.put(blob)
-        snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,
-            () => {
-                setUploading(true)
-            },
-            (error) => {
-                setUploading(false)
-                console.log(error)
-                blob.close()
-                return
-            },
-            () => {
-                snapshot.snapshot.ref.getDownloadURL().then((url) => {
-                    setUploading(false)
-                    console.log("Download URL: ", url)
-                    setImage(url)
-                    blob.close()
-                    return url
-                })
+                //create empty user chats on firestore
+                await setDoc(doc(database, "userChats", res.user.uid), {});
+            } catch (err) {
+                console.log(err);
             }
-        )
-    }
-
-    const onHandleSignUp = () => {
-        if (email != "" && password != "" && name != "") {
-            createUserWithEmailAndPassword(auth, email, password)
-                .then(() => console.log("Sign Up Success"))
-                .catch((err) => Alert.alert("Login error", err.message));
-            addDoc(collection(database, 'users'), {
-                name,
-                email,
-                // photoURL: uploadProfilePic
-            });
-
-            addDoc(collection(database, (email + 'Chats')), {});
         }
     };
-
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <Image source={backImage} style={styles.backImage} />
             <View style={styles.whiteSheet} />
             <View style={styles.form} >
@@ -95,8 +53,8 @@ const SignUp = ({ navigation }) => {
                     placeholder='Enter Display Name'
                     autoCapitalize='none'
                     autofocus={true}
-                    value={name}
-                    onChangeText={(text) => setName(text)}
+                    value={displayName}
+                    onChangeText={(text) => setDisplayName(text)}
                 />
                 <TextInput
                     style={styles.input}
@@ -128,9 +86,9 @@ const SignUp = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </SafeAreaView>
+        </View>
     )
-}
+};
 
 export default SignUp;
 
@@ -166,7 +124,7 @@ const styles = StyleSheet.create({
     },
     whiteSheet: {
         width: '100%',
-        height: "85%",
+        height: "75%",
         position: "absolute",
         bottom: 0,
         backgroundColor: '#fff',

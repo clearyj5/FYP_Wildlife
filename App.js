@@ -7,17 +7,17 @@ import { auth } from './config/firebase';
 
 import Chat from './screens/Chat.js';
 import Login from './screens/Login.js';
-import SignUp from './screens/SignUp.js';
+import SignUp from './screens/xSignUp.js';
 import Home from './screens/Home.js'
 import ChatSearch from './screens/ChatSearch';
 
 const Stack = createStackNavigator();
-const AuthenticatedUserContext = createContext({});
+export const AuthenticatedUserContext = createContext({});
 
-const AuthenticatedUserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export const AuthenticatedUserProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(null);
   return (
-    <AuthenticatedUserContext.Provider value={{ user, setUser }}>
+    <AuthenticatedUserContext.Provider value={{ currentUser, setCurrentUser }}>
       {children}
     </AuthenticatedUserContext.Provider>
   )
@@ -27,7 +27,7 @@ function ChatStack() {
   return (
     <Stack.Navigator defaultScreenOptions={Home}>
       <Stack.Screen name='Home' component={Home} />
-      <Stack.Screen name='Messages' component={ChatSearch} />
+      <Stack.Screen name='Channels' component={ChatSearch} />
       <Stack.Screen name='Chat' component={Chat} />
     </Stack.Navigator>
   )
@@ -43,17 +43,18 @@ function AuthStack() {
 }
 
 function RootNavigator() {
-  const { user, setUser } = useContext(AuthenticatedUserContext);
+  const { currentUser, setCurrentUser } = useContext(AuthenticatedUserContext);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth,
       async authenticatedUser => {
-        authenticatedUser ? setUser(authenticatedUser) : setUser(null);
+        authenticatedUser ? setCurrentUser(authenticatedUser) : setCurrentUser(null);
         setLoading(false);
       }
     );
     return () => unsubscribe();
-  }, [user]);
+  }, [currentUser]);
+  
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -63,7 +64,7 @@ function RootNavigator() {
   }
   return (
     <NavigationContainer>
-      {user ? <ChatStack /> : <AuthStack />}
+      {currentUser ? <ChatStack /> : <AuthStack />}
     </NavigationContainer>
   )
 }
