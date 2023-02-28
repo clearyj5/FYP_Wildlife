@@ -30,6 +30,12 @@ const Home = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity
+                onPress={() => navigation.navigate("Map")}
+                style={styles.mapButton}
+            >
+                <Entypo name="map" size={24} color={colors.lightGray} />
+            </TouchableOpacity>
+            <TouchableOpacity
                 onPress={() => navigation.navigate("Channels")}
                 style={styles.chatButton}
             >
@@ -62,7 +68,23 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: .9,
         shadowRadius: 8,
+        marginRight: 80,
+        marginBottom: 50,
+    },
+    mapButton: {
+        backgroundColor: colors.primary,
+        height: 50,
+        width: 50,
+        borderRadius: 25,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: colors.primary,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: .9,
+        shadowRadius: 8,
         marginRight: 20,
-        marginBottom: 40,
     }
 });

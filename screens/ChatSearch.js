@@ -141,6 +141,12 @@ const ChatSearch = () => {
                 </View>
                 <Text style={styles.name}>Rescuers</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.searchItem} onPress={() => navigation.navigate("Chat")}>
+                <View style={styles.imageBox}>
+                    <AntDesign name="plus" size={40} color={colors.black} style={{ marginLeft: 20 }} />
+                </View>
+                <Text style={styles.name}>Add new Chat</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -186,6 +192,7 @@ const styles = StyleSheet.create({
         borderColor: 'grey',
         borderWidth: 1,
         borderRadius: 20,
+        marginTop: 10,
     },
     imageBox: {
         flex: 2,
@@ -199,7 +206,7 @@ const styles = StyleSheet.create({
     },
     name: {
         flex: 6,
-        paddingLeft: 20,
+        paddingLeft: 10,
         fontSize: 20,
         fontWeight: '300',
         alignContent: 'center',
