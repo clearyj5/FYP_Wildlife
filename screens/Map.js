@@ -1,9 +1,20 @@
-import React, { useContext, useState, useEffect } from "react";
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import { StyleSheet, View, Button } from 'react-native';
+import React, { useContext, useState, useEffect, useLayoutEffect } from "react";
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { StyleSheet, View, Button, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
+import { Feather, Entypo, AntDesign } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { signOut } from 'firebase/auth';
+import { auth, database } from '../config/firebase';
+import colors from '../colors';
 
 export default function Map() {
+
+    const navigation = useNavigation();
+
+    const onSignOut = () => {
+        signOut(auth).catch(error => console.log('Error logging out: ', error));
+    };
 
     const [mapRegion, setmapRegion] = useState({
         longitude: 0,
@@ -23,6 +34,21 @@ export default function Map() {
             longitudeDelta: 0.02,
         });
     }
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    style={{
+                        marginRight: 10
+                    }}
+                    onPress={onSignOut}
+                >
+                    <AntDesign name="logout" size={24} color={colors.gray} style={{ marginRight: 10 }} />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
 
 
     return (
