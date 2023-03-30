@@ -11,6 +11,7 @@ import SignUp from './screens/SignUp.js';
 import Home from './screens/Home.js'
 import ChatSearch from './screens/ChatSearch';
 import Map from './screens/Map';
+import CaseDetails from './screens/CaseDetails';
 
 const Stack = createStackNavigator();
 export const AuthenticatedUserContext = createContext({});
@@ -31,6 +32,7 @@ function ChatStack() {
       <Stack.Screen name='Channels' component={ChatSearch} />
       <Stack.Screen name='Chat' component={Chat} />
       <Stack.Screen name='Map' component={Map} />
+      <Stack.Screen name='CaseDetails' component={CaseDetails} />
     </Stack.Navigator>
   )
 }

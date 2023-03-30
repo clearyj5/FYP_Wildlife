@@ -10,72 +10,72 @@ import colors from '../colors';
 
 export default function Chat() {
 
-    const [messages, setMessages] = useState([]);
-    const navigation = useNavigation();
+  const [messages, setMessages] = useState([]);
+  const navigation = useNavigation();
 
-    const onSignOut = () => {
-        signOut(auth).catch(error => console.log('Error logging out: ', error));
-    };
+  const onSignOut = () => {
+    signOut(auth).catch(error => console.log('Error logging out: ', error));
+  };
 
-    useLayoutEffect(() => {
-        navigation.setOptions({
-          headerRight: () => (
-            <TouchableOpacity
-              style={{
-                marginRight: 10
-              }}
-              onPress={onSignOut}
-            >
-              <AntDesign name="logout" size={24} color={colors.gray} style={{marginRight: 10}}/>
-            </TouchableOpacity>
-          )
-        });
-    }, [navigation]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{
+            marginRight: 10
+          }}
+          onPress={onSignOut}
+        >
+          <AntDesign name="logout" size={24} color={colors.gray} style={{ marginRight: 10 }} />
+        </TouchableOpacity>
+      )
+    });
+  }, [navigation]);
 
-    useLayoutEffect(() => {
+  useLayoutEffect(() => {
 
-        const collectionRef = collection(database, 'messages');
-        const q = query(collectionRef, orderBy('createdAt', 'desc'));
+    const collectionRef = collection(database, 'messages');
+    const q = query(collectionRef, orderBy('createdAt', 'desc'));
 
-        const unsubscribe = onSnapshot(q, querySnapshot => {
-            console.log('querySnapshot unsusbscribe');
-            setMessages(
-                querySnapshot.docs.map(doc => ({
-                _id: doc.data()._id,
-                createdAt: doc.data().createdAt.toDate(),
-                text: doc.data().text,
-                user: doc.data().user
-                }))
-            );
-        });
-        return unsubscribe;
-    }, []);
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      console.log('querySnapshot unsusbscribe');
+      setMessages(
+        querySnapshot.docs.map(doc => ({
+          _id: doc.data()._id,
+          createdAt: doc.data().createdAt.toDate(),
+          text: doc.data().text,
+          user: doc.data().user
+        }))
+      );
+    });
+    return unsubscribe;
+  }, []);
 
-    const onSend = useCallback((messages = []) => {
-        setMessages(previousMessages =>
-          GiftedChat.append(previousMessages, messages)
-        );
-        // setMessages([...messages, ...messages]);
-        const { _id, createdAt, text, user } = messages[0];    
-        addDoc(collection(database, 'messages'), {
-          _id,
-          createdAt,
-          text,
-          user
-        });
-    }, []);
+  const onSend = useCallback((messages = []) => {
+    setMessages(previousxMessages =>
+      GiftedChat.append(previousMessages, messages)
+    );
+    // setMessages([...messages, ...messages]);
+    const { _id, createdAt, text, user } = messages[0];
+    addDoc(collection(database, 'messages'), {
+      _id,
+      createdAt,
+      text,
+      user
+    });
+  }, []);
 
-    return (
-        <GiftedChat 
-            messages={messages}
-            onSend={messages => onSend(messages)}
-            user={{
-                _id: auth?.currentUser?.uid,
-                avatar: 'https://i.pinimg.com/736x/0e/2e/9d/0e2e9dc33751fbf4a708c1ecbdaf2d43.jpg'
-            }}
-            messagesContainerStyle={{
-                backgroundColor: '#ffff'
-            }}
-        />
-    )
+  return (
+    <GiftedChat
+      messages={messages}
+      onSend={messages => onSend(messages)}
+      user={{
+        _id: auth?.currentUser?.uid,
+        avatar: 'https://i.pinimg.com/736x/0e/2e/9d/0e2e9dc33751fbf4a708c1ecbdaf2d43.jpg'
+      }}
+      messagesContainerStyle={{
+        backgroundColor: '#ffff'
+      }}
+    />
+  )
 }

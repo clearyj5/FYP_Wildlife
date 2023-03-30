@@ -33,6 +33,7 @@ const SignUp = () => {
                     uid: res.user.uid,
                     displayName,
                     email,
+                    type: "USER"
                     // photoURL: downloadURL,
                 });
 
