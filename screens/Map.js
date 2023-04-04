@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useLayoutEffect } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Button, TouchableOpacity, Text } from 'react-native';
 import * as Location from 'expo-location';
 import { Feather, Entypo, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -8,7 +8,9 @@ import { signOut } from 'firebase/auth';
 import { auth, database } from '../config/firebase';
 import colors from '../colors';
 
-export default function Map() {
+export default function Map({ route }) {
+
+    const data = route.params.caseData;
 
     const navigation = useNavigation();
 
@@ -38,12 +40,7 @@ export default function Map() {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <TouchableOpacity
-                    style={{
-                        marginRight: 10
-                    }}
-                    onPress={onSignOut}
-                >
+                <TouchableOpacity style={{ marginRight: 10 }} onPress={onSignOut}>
                     <AntDesign name="logout" size={24} color={colors.gray} style={{ marginRight: 10 }} />
                 </TouchableOpacity>
             )
@@ -53,8 +50,16 @@ export default function Map() {
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} region={mapRegion} provider={PROVIDER_GOOGLE}>
+            <MapView style={styles.map} region={mapRegion} provider={PROVIDER_GOOGLE} zoomControlEnabled={true}>
                 <Marker coordinate={mapRegion} title="Location" />
+                {data.map((data, index) =>
+                    <Marker
+                        key={index}
+                        coordinate={{
+                            latitude: data.latitude,
+                            longitude: data.longitude,
+                        }}
+                    />)}
             </MapView>
             <Button title="Get Location" onPress={userLocation} />
         </View>

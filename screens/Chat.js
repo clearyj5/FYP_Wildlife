@@ -52,7 +52,7 @@ export default function Chat() {
   }, []);
 
   const onSend = useCallback((messages = []) => {
-    setMessages(previousxMessages =>
+    setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages)
     );
     // setMessages([...messages, ...messages]);

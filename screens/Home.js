@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, Image, StyleSheet, FlatList, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome } from '@expo/vector-icons';
 import colors from '../colors';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { signOut } from 'firebase/auth';
 import { auth, database } from '../config/firebase';
 import { AuthenticatedUserContext } from "../App";
@@ -27,50 +26,55 @@ const Home = () => {
 
     const navigation = useNavigation();
 
-    const expand = (item) => {
-        item.expanded = true;
-    }
-
-    const unExpand = (item) => {
-        item.expanded = false;
-    }
+    const [data, setData] = useState([]);
 
     useEffect(() => {
         navigation.setOptions({
             headerLeft: () => (
-                <FontAwesome name="search" size={24} color={colors.gray} style={{ marginLeft: 15 }} />
-            ),
-            headerRight: () => (
                 <Image
                     source={logo}
                     style={{
                         width: 40,
                         height: 40,
-                        marginRight: 15,
+                        marginLeft: 15,
                     }}
                 />
             ),
+            headerRight: () => (
+                <View style={styles.headerRight}>
+                    <TouchableOpacity onPress={() => navigation.navigate("QR Code")}>
+                        <FontAwesome5 name="donate" size={35} color={colors.gray} style={{ marginRight: 25 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("Alerts")}>
+                        <Ionicons name="notifications" size={35} color={colors.gray} style={{ marginRight: 15 }} />
+                    </TouchableOpacity>
+                </View>
+            ),
         });
 
-        const collectionRef = collection(database, 'users');
-        const q = query(collectionRef, orderBy('displayName'));
+        const collectionRef = collection(database, 'cases');
+        const q = query(collectionRef, where("status", "!=", "Rescued"));
 
         const unsubscribe = onSnapshot(q, querySnapshot => {
             console.log('querySnapshot unsusbscribe');
             setData(
                 querySnapshot.docs.map(doc => ({
-                    id: doc.data().uid,
-                    displayName: doc.data().displayName,
-                    email: doc.data().email,
-                    type: doc.data().type,
-                    expanded: false,
+                    id: doc.data().id,
+                    latitude: doc.data().latitude,
+                    longitude: doc.data().longitude,
+                    mopName: doc.data().mopName,
+                    mopAddress: doc.data().mopAddress,
+                    mopPhone: doc.data().mopPhone,
+                    notes: doc.data().notes,
+                    responders: doc.data().responders,
+                    species: doc.data().species,
+                    status: doc.data().status,
+                    title: doc.data().title,
                 }))
             );
         });
         return unsubscribe;
     }, [navigation], []);
-
-    const [data, setData] = useState([]);
 
     return (
         <View style={styles.container}>
@@ -80,24 +84,24 @@ const Home = () => {
                 numColumns={1}
                 scrollsToTop={false}
                 renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => navigation.navigate("CaseDetails", {paramKey: item.id})} style={item.expanded? styles.itemExpanded : styles.item}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Case Details", { paramKey: item.id })} style={styles.item}>
                         <View style={styles.innerContainer}>
-                            <Text style={styles.heading}>{item.displayName}</Text>
-                            <Text style={styles.text}>{item.email}</Text>
-                            <Text style={styles.text}>{item.id}</Text>
-                            <Text style={styles.text}>{item.type}</Text>
+                            <Text style={styles.heading}>{item.title}</Text>
+                            <Text style={styles.text}>{item.species}</Text>
+                            <Text style={styles.text}>{item.status}</Text>
+                            <Text style={styles.text}>{item.responders}</Text>
                         </View>
                     </TouchableOpacity>
                 )}
             />
             <TouchableOpacity
-                onPress={() => navigation.navigate("Map")}
+                onPress={() => navigation.navigate("Map View", { caseData: data })}
                 style={styles.mapButton}
             >
                 <Entypo name="map" size={28} color={colors.lightGray} />
             </TouchableOpacity>
             <TouchableOpacity
-                onPress={() => navigation.navigate("Channels")}
+                onPress={() => navigation.navigate("Chat")}
                 style={styles.chatButton}
             >
                 <Entypo name="chat" size={28} color={colors.lightGray} />
@@ -123,13 +127,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
 
     },
-    itemExpanded: {
-        backgroundColor: colors.primary,
-        padding: 15,
-        borderRadius: 15,
-        margin: 5,
-        marginHorizontal: 10,
-    },
     innerContainer: {
         alignItems: "center",
         flexDirection: "column",
@@ -139,6 +136,9 @@ const styles = StyleSheet.create({
     },
     text: {
         fontWeight: '300',
+    },
+    headerRight: {
+        flexDirection: "row"
     },
     chatButton: {
         backgroundColor: colors.primary,

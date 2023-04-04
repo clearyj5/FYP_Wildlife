@@ -12,6 +12,8 @@ import Home from './screens/Home.js'
 import ChatSearch from './screens/ChatSearch';
 import Map from './screens/Map';
 import CaseDetails from './screens/CaseDetails';
+import QRCodeScreen from './screens/QRCode';
+import Alerts from './screens/Alerts';
 
 const Stack = createStackNavigator();
 export const AuthenticatedUserContext = createContext({});
@@ -29,10 +31,11 @@ function ChatStack() {
   return (
     <Stack.Navigator defaultScreenOptions={Home}>
       <Stack.Screen name='Home' component={Home} />
-      <Stack.Screen name='Channels' component={ChatSearch} />
       <Stack.Screen name='Chat' component={Chat} />
-      <Stack.Screen name='Map' component={Map} />
-      <Stack.Screen name='CaseDetails' component={CaseDetails} />
+      <Stack.Screen name='Map View' component={Map} />
+      <Stack.Screen name='Case Details' component={CaseDetails} />
+      <Stack.Screen name='QR Code' component={QRCodeScreen} />
+      <Stack.Screen name='Alerts' component={Alerts} />
     </Stack.Navigator>
   )
 }
