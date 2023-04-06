@@ -6,29 +6,10 @@ const backImage = require("../assets/KWR_logo.png");
 import colors from '../colors';
 import { Ionicons } from "@expo/vector-icons";
 
-const CaseDetails = ({ route, navigation }) => {
 
-    const currentUser = auth.currentUser;
+const CaseResponderDetails = ({ route, navigation }) => {
 
     const data = route.params.paramKey
-
-    const respond = async () => {
-        const docRef = doc(database, "cases", data.id)
-
-        if (data.responders == "None") {
-            await updateDoc(docRef, {
-                responders: currentUser.displayName,
-                status: 'In Progress'
-            })
-        }
-        else {
-            await updateDoc(docRef, {
-                responders: data.responders + ", " + currentUser.displayName
-            })
-        }
-
-        navigation.navigate("Home");
-    }
 
     return (
         <View style={styles.container}>
@@ -60,8 +41,8 @@ const CaseDetails = ({ route, navigation }) => {
                         <Text style={styles.text}>{data.responders}</Text>
                         <Text style={styles.heading}>Media</Text>
                     </ScrollView>
-                    <TouchableOpacity style={styles.button} onPress={respond}>
-                        <Text style={styles.buttonText}>Respond</Text>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Responding</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -69,7 +50,7 @@ const CaseDetails = ({ route, navigation }) => {
     )
 }
 
-export default CaseDetails;
+export default CaseResponderDetails;
 
 const styles = StyleSheet.create({
     container: {
@@ -115,7 +96,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         marginLeft: 50,
-        marginRight: 25,
+        marginRight: 25
     },
     title: {
         fontSize: 30,
@@ -136,7 +117,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     button: {
-        backgroundColor: '#0f4c5c',
+        backgroundColor: colors.gray,
         height: 58,
         width: '80%',
         borderRadius: 10,

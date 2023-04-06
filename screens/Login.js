@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, Image, SafeAreaView, TouchableOpacity, StatusBar, Alert, KeyboardAvoidingView } from 'react-native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
 const backImage = require("../assets/KWR_logo.png");
+import colors from '../colors';
 
 export default function Login({ navigation }) {
 
@@ -18,49 +19,49 @@ export default function Login({ navigation }) {
     };
 
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="height">
             <Image source={backImage} style={styles.backImage} />
-            <View style={styles.whiteSheet} />
-            <SafeAreaView style={styles.form} >
-                <Text style={styles.title}>Log In</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder='Enter Email'
-                    autoCapitalize='none'
-                    keyboardType="email-address"
-                    textContentType="emailAddress"
-                    autofocus={true}
-                    value={email}
-                    onChangeText={(text) => setEmail(text)}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder='Enter Password'
-                    autoCapitalize='none'
-                    autocorrect={false}
-                    secureTextEntry={true}
-                    textContentType="password"
-                    value={password}
-                    onChangeText={(text) => setPassword(text)}
-                />
-                <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
-                    <Text style={styles.text}>Log In</Text>
-                </TouchableOpacity>
-                <View style={{ marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
-                    <Text style={{ color: 'gray', fontweight: '600', fontSize: 14 }}>Don't have an account? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-                        <Text style={{ fontSize: 16, fontWeight: '600', color: '#0f4c5c' }}> Sign Up</Text>
+            <View style={styles.whiteSheet}>
+                <View style={styles.form} >
+                    <Text style={styles.title}>Log In</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Enter Email'
+                        autoCapitalize='none'
+                        keyboardType="email-address"
+                        textContentType="emailAddress"
+                        autofocus={true}
+                        value={email}
+                        onChangeText={(text) => setEmail(text)}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder='Enter Password'
+                        autoCapitalize='none'
+                        autocorrect={false}
+                        secureTextEntry={true}
+                        textContentType="password"
+                        value={password}
+                        onChangeText={(text) => setPassword(text)}
+                    />
+                    <TouchableOpacity style={styles.button} onPress={onHandleLogin}>
+                        <Text style={styles.text}>Log In</Text>
                     </TouchableOpacity>
+                    <View style={{ marginTop: 20, flexDirection: 'row', alignItems: 'center', alignSelf: 'center' }}>
+                        <Text style={{ color: 'gray', fontweight: '600', fontSize: 14 }}>Don't have an account? </Text>
+                        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+                            <Text style={{ fontSize: 16, fontWeight: '600', color: '#0f4c5c' }}> Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </SafeAreaView>
-        </View>
+            </View>
+        </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff"
     },
     title: {
         fontSize: 30,
@@ -80,10 +81,10 @@ const styles = StyleSheet.create({
     },
     backImage: {
         width: "100%",
-        height: "38%",
+        height: "45%",
         position: "absolute",
         top: 0,
-        resizeMode: 'cover',
+        resizeMode: 'cover'
     },
     whiteSheet: {
         width: '100%',
@@ -95,8 +96,9 @@ const styles = StyleSheet.create({
     },
     form: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         marginHorizontal: 30,
+        paddingTop: 30
     },
     button: {
         backgroundColor: '#0f4c5c',
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 40,
+        marginTop: 30,
     },
     text: {
         fontSize: 24,

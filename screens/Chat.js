@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { collection, addDoc, orderBy, query, onSnapshot } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { auth, database } from '../config/firebase';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import colors from '../colors';
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Chat() {
 
@@ -66,16 +67,49 @@ export default function Chat() {
   }, []);
 
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: auth?.currentUser?.uid,
-        avatar: 'https://i.pinimg.com/736x/0e/2e/9d/0e2e9dc33751fbf4a708c1ecbdaf2d43.jpg'
-      }}
-      messagesContainerStyle={{
-        backgroundColor: '#ffff'
-      }}
-    />
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Chats</Text>
+      </View>
+      <GiftedChat
+        messages={messages}
+        renderUserName={true}
+        renderUsernameOnMessage={true}
+        onSend={messages => onSend(messages)}
+        user={{
+          _id: auth.currentUser.uid,
+          username: auth.currentUser.displayName,
+          avatar: auth.currentUser.photoURL
+        }}
+        messagesContainerStyle={{
+          backgroundColor: '#ffff'
+        }}
+      />
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    height: 60,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%'
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#68a19a',
+    textAlign: 'center',
+    textAlignVertical: 'center'
+  }
+});

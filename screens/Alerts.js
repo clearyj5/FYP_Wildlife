@@ -4,6 +4,7 @@ import { Feather, Entypo, AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { auth, database } from '../config/firebase';
 import { collection, addDoc, orderBy, query, onSnapshot, setDoc, Timestamp, updateDoc, doc } from 'firebase/firestore';
+import colors from '../colors';
 
 export default function Alerts() {
 
@@ -30,7 +31,9 @@ export default function Alerts() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Alerts</Text>
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>Alerts</Text>
+            </View>
             <View style={styles.scrollContainer}>
                 <FlatList
                     style={{ height: '100%', width: '100%' }}
@@ -56,6 +59,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
+    },
+    header: {
+        height: 60,
+        backgroundColor: colors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%'
+    },
+    headerTitle: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     scrollContainer: {
         height: '100%',
